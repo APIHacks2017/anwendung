@@ -19,9 +19,9 @@
     $('.search_click').click(function(){
 
       $('#tabs').show();
-      var a=$("#search_param").val();
-      alert(a);
-      $(".getting_val").text(a);
+      var search_param=$("#search_param").val();
+      // alert(a);
+      $(".getting_val").text(search_param);
     });
       $('#advanced').click(function(){
       $('.chc_option').show();
@@ -30,6 +30,8 @@
     });
 
         getThirukkural();
+         getSentiment(search_param);
+         getImages(search_param);
 });
  function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -81,6 +83,141 @@
 
       $("#result_thirukkural").html('').append(tdiv);
     });
+  }
+    function getSentiment(search_param){
+  
+    
+    console.log('in getSentiment');
+  
+    //pass number
+    //http://52.36.211.72:5555/gateway/Thirukkural/1.0/{number}
+    //Query Params
+    //{'appid','x5mwe55oderut'}
+    //Auth-Header
+    //x-Gateway-APIKey => 4fbacb53-4a39-407e-816c-a691dd3839e0
+    
+    var apiKey = "4fbacb53-4a39-407e-816c-a691dd3839e0";
+    var apiurl="http://52.36.211.72:5555/gateway/Sentiment%20APIs/1.0.5/sentiment/predict?APIKey=" + apiKey;
+    var paramData = {'access_token':'187b20cb-e0fb-4a60-90dd-66e91a86b76a',
+            'text':search_param};
+    
+    
+    //callAPI(apiurl, httpType, apiKey, paramData, successCallBack, errorCallBack)
+    
+    $.ajax({
+      url: apiurl, 
+      headers: {"accept" : "application/json",
+      "Content-Type" : "application/json"},
+      // if you using below proxy passes use --> url: '/xxx',
+      type: 'GET', //or GET
+      crossDomain : true,
+      data:paramData
+    }).then(function(data) {
+      console.log('call complete');
+      console.log(data);
+      
+      var predict = data.predict.sentiment;
+      var score = data.predict.score;
+      var stext = data.text;
+      
+      var percentScore = 100 * score;
+      
+      var tdiv = $("<div/>");
+      tdiv.append($("<p/>").html("Text :: " + stext));
+      tdiv.append($("<p/>").html("predict :: " + predict));
+      tdiv.append($("<p/>").html("score :: " + percentScore));
+      tdiv.append($("<p/>").html("All Results" ));
+      
+      var sentiment =  data.sentiments[0].sentiment;
+      percentScore =  100 * data.sentiments[0].score;
+      tdiv.append($("<p/>").html(sentiment + " => " + percentScore));
+      
+      sentiment =  data.sentiments[1].sentiment;
+      percentScore =  100 * data.sentiments[1].score;
+      tdiv.append($("<p/>").html(sentiment + " => " + percentScore));
+            
+      sentiment =  data.sentiments[2].sentiment;
+      percentScore =  100 * data.sentiments[2].score;
+      tdiv.append($("<p/>").html(sentiment + " => " + percentScore));
+      
+      
+
+      $("#result_sentiment").html('').append(tdiv);
+    });
+  }
+  function getImages(search_param){
+  
+    
+    console.log('in getImages');
+  
+    //pass number
+    //http://52.36.211.72:5555/gateway/Thirukkural/1.0/{number}
+    //Query Params
+    //{'appid','x5mwe55oderut'}
+    //Auth-Header
+    //x-Gateway-APIKey => 4fbacb53-4a39-407e-816c-a691dd3839e0
+    
+    var apiKey = "4fbacb53-4a39-407e-816c-a691dd3839e0";
+    var apiurl="http://52.36.211.72:5555/gateway/Getty%20Images%20API/3/v3/search/images?APIKey=" + apiKey;
+    var paramData = {'specific_people':search_param};
+    
+    
+    //callAPI(apiurl, httpType, apiKey, paramData, successCallBack, errorCallBack)
+    
+    $.ajax({
+      url: apiurl, 
+      headers: {"accept" : "application/json",
+      "Content-Type" : "application/json"},
+      // if you using below proxy passes use --> url: '/xxx',
+      type: 'GET', //or GET
+      crossDomain : true,
+      data:paramData
+    }).then(function(data) {
+      console.log('call complete');
+      console.log(data);
+      
+      var imagesnos = data.result_count;
+      
+      
+      var tdiv = $("<div/>");
+      tdiv.append($("<p/>").html("Result Count :: " + imagesnos));
+      tdiv.append($("<p/>").html("Top Results" ));
+      
+      var ndiv = null;
+      /*
+      var ndiv = addImage(data, 0);
+      tdiv.append(ndiv);
+      
+      ndiv = addImage(data, 1);
+      tdiv.append(ndiv);
+      
+      ndiv = addImage(data, 2);
+      tdiv.append(ndiv);
+      */
+      
+      for (i = 0; i < 10; i++) { 
+        ndiv = addImage(data, i);
+        tdiv.append(ndiv);
+      }
+
+      
+      $("#result_gettyimages").html('').append(tdiv);
+    });
+    
+    
+    function addImage(data, no){
+      var ndiv = $("<div/>");
+      ndiv.addClass("gimages");
+      
+      var rec = data.images[no];
+      var imgURI = rec.display_sizes[0].uri;
+      
+      
+      ndiv.append($("<img>").attr("src", imgURI));
+      ndiv.append($("<p/>").html( rec.title));
+      
+      return ndiv;
+    }
   }
   </script>
 </head>
@@ -188,17 +325,12 @@
   <div id="tabs-2">
  <p>Sentiment value</p>
  <h4> Name:<label class="getting_val"></label></h4>
- <table>
-   <tr><td>Positive:70%</td></tr>
-   <tr><td>Negative:4%</td></tr>
-   <tr><td>Neutral:26</td></tr>
-
- </table>
+      <div id="result_sentiment"></div>
+ 
   </div>
   <div id="tabs-3">
   <h4> Name:<label class="getting_val"></label></h4>
-  <p>No of hits:100.</p>
-  </div>
+<div id="result_gettyimages"></div>  </div>
    <div id="tabs-4">
     <h4> Name:<label class="getting_val"></label></h4>
   <p>Currently Unavalible.</p>
