@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/hackthon.css">
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="js/bootstrap.min.js"></script>  
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+   <script>
+ $( document ).ready(function(){
+    $( "#tabs" ).tabs();
+
+    $('.search_click').click(function(){
+
+      $('#tabs').show();
+      var a=$("#search_param").val();
+      alert(a);
+      $(".getting_val").text(a);
+    });
+      $('#advanced').click(function(){
+      $('.chc_option').show();
+        
+
+    });
+
+        getThirukkural();
+});
+ function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
+  
+  function getThirukkural(){
+  
+    var tno = getRandomInt(1, 1330);
+    console.log('in getThirukkural');
+  
+    //pass number
+    //http://52.36.211.72:5555/gateway/Thirukkural/1.0/{number}
+    //Query Params
+    //{'appid','x5mwe55oderut'}
+    //Auth-Header
+    //x-Gateway-APIKey => 4fbacb53-4a39-407e-816c-a691dd3839e0
+    
+    var apiKey = "4fbacb53-4a39-407e-816c-a691dd3839e0";
+    var apiurl="http://52.36.211.72:5555/gateway/Thirukkural/1.0/"+ tno+ "?APIKey=" + apiKey;
+    var paramData = {'appid':'x5mwe55oderut'};
+    
+    //callAPI(apiurl, httpType, apiKey, paramData, successCallBack, errorCallBack)
+    
+    $.ajax({
+      url: apiurl, 
+      //headers: {"x-Gateway-APIKey" : apiKey},
+      // if you using below proxy passes use --> url: '/xxx',
+      type: 'GET', //or GET
+      crossDomain : true,
+      data:paramData
+    }).then(function(xmlData) {
+      console.log('call complete');
+      //var xml = $.parseXML(xmlData);
+      //alert(xmlData);
+      var line1 = $(xmlData).find("Kural").find("Line1").text();
+      var line2 = $(xmlData).find("Kural").find("Line2").text();
+      var enTranslation = $(xmlData).find("Kural").find("Translation").text();
+
+      console.log(line1);
+      console.log(line2);
+      console.log(enTranslation);
+      
+      var tdiv = $("<div/>");
+      tdiv.append($("<p/>").html("Kural No : " + tno));
+      tdiv.append($("<p/>").html(line1));
+      tdiv.append($("<p/>").html(line2));
+      tdiv.append($("<p/>").html(enTranslation));
+
+      $("#result_thirukkural").html('').append(tdiv);
+    });
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Anwendung&nbsp;&nbsp;(An-Wen-don)</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <!-- <li class="active"><a href="#">Home</a></li> -->
+      <li class="thought"><a href="#"><button type="button" class="btn btn-primary btn-sm  " data-toggle="modal" data-target="#myModal">Thought of the day</button>
+    </li>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Thought of day</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <p>Thirukkural </p>
+      <div id="result_thirukkural"></div>
+      <div class="thirukkural"></div>
+    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </ul>
+  </div>
+</nav>
+  
+ <div class="container">
+         <div class="row">              
+        <div class="col-xs-6 col-sm-6 col-md-6 col-xs-offset-2">
+        <div class="input-group">
+
+                <div class="input-group-btn search-panel">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                      <span id="search_concept">Filter by</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#contains">Person </a></li>
+                      <li><a href="#its_equal">Orginisation</a></li>
+                    </ul>
+                </div>
+                <input type="hidden" name="search_param"  >         
+                <input type="text" class="form-control" name="search_term" val="" placeholder="Search term..." id="search_param">
+                <span class="input-group-btn">
+                    <button class="btn btn-default search_click" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+
+            </div>
+            </div>
+   <div class="col-md-12 button_advance" >
+   <button class="btn btn-primary btn-sm" id="advanced">Advanced Search</button>
+     
+     <label class="checkbox-inline chc_option">
+  <input type="checkbox" id="inlineCheckbox1" checked="checked" value="option1">Block Score
+</label>
+<label class="checkbox-inline chc_option">
+  <input type="checkbox" id="inlineCheckbox2" value="option2"> Images
+</label>
+<label class="checkbox-inline chc_option">
+  <input type="checkbox" id="inlineCheckbox3" value="option3"> Sentiment
+</label>
+<label class="checkbox-inline chc_option">
+  <input type="checkbox" id="inlineCheckbox4" value="option3"> Twitter
+</label>
+<label class="checkbox-inline chc_option">
+  <input type="checkbox" id="inlineCheckbox5" value="option3"> Facebook
+</label>
+   </div>         
+  <div id="tabs" class="col-md-12 col-sm-12 col-md-12 ">
+  <ul>
+  <li><a href="#tabs-1">Block Score</a></li>
+  <li><a href="#tabs-2">Sentiment</a></li>
+  <li><a href="#tabs-3">Images</a></li>
+  
+  <li><a href="#tabs-4">Twitter</a></li>
+  <li><a href="#tabs-5">Facebook</a></li>
+  
+  </ul>
+  <div id="tabs-1">
+  <p>Block Score</p>
+  <h4> Name:<label class="getting_val"></label></h4>
+  <table>
+    <tr>
+    <td>Total Count:10</td></tr>
+    <tr>
+    <td>Has more:No more Data</td>
+    
+    </tr>
+
+
+  </table>
+
+  </div>
+  <div id="tabs-2">
+ <p>Sentiment value</p>
+ <h4> Name:<label class="getting_val"></label></h4>
+ <table>
+   <tr><td>Positive:70%</td></tr>
+   <tr><td>Negative:4%</td></tr>
+   <tr><td>Neutral:26</td></tr>
+
+ </table>
+  </div>
+  <div id="tabs-3">
+  <h4> Name:<label class="getting_val"></label></h4>
+  <p>No of hits:100.</p>
+  </div>
+   <div id="tabs-4">
+    <h4> Name:<label class="getting_val"></label></h4>
+  <p>Currently Unavalible.</p>
+  </div>
+     <div id="tabs-5">
+     <h4> Name:<label class="getting_val"></label></h4>
+  <p>Currently Unavalible.</p>
+  </div>
+
+</div>  
+  
+<!-- end of row -->
+</div>  
+</div>
+</body>
+</html>

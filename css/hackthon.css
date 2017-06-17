@@ -1,0 +1,25 @@
+
+#tabs{
+    margin: 14px;
+    display: none;
+}
+.ui-widget-header{
+
+
+    background: none !important;
+}
+    
+.navbar-nav>li {
+    float:right !important;
+}
+.chc_option{
+    display: none;
+}
+.button_advance{
+    margin-left: 200px;
+    margin-top: 10px;
+
+}
+.thought{
+    margin-left: 45em;
+}
