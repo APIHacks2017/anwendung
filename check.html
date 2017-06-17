@@ -18,10 +18,13 @@
 
     $('.search_click').click(function(){
 
-      $('#tabs').show();
-      var search_param=$("#search_param").val();
-      // alert(a);
-      $(".getting_val").text(search_param);
+		$('#tabs').show();
+		var search_param=$("#search_param").val();
+		//alert(a);
+		$(".getting_val").text(search_param);
+		getSentiment(search_param);
+        getImages(search_param);
+		
     });
       $('#advanced').click(function(){
       $('.chc_option').show();
@@ -30,8 +33,7 @@
     });
 
         getThirukkural();
-         getSentiment(search_param);
-         getImages(search_param);
+
 });
  function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
